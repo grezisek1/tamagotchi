@@ -1,28 +1,194 @@
-* {
+body {
+  height: 100dvh;
   margin: 0;
-  padding: 0;
+  background: #1c1c1c;
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: "VT323", monospace;
+}
+fieldset {
+  border: unset;
+  padding: unset;
+  margin: unset;
+}
+button {
+  font: inherit;
+}
+.screen-readers {
+  position: absolute;
+  left: -300vw;
+}
+
+.gameboy {
+  position: fixed;
+  inset: max(0px, 50% - 328.5px) max(0px, 50% - 187.5px);
+  display: grid;
+  align-content: space-between;
+  padding: 40px 6px;
+  background: #f8d26d;
+}
+
+.outputs {
+  display: grid;
+  grid-template-columns: 100%;
+}
+.output {
+  display: flex;
+  align-items: center;
+  font-size: 60px;
+  line-height: 40px;
+}
+.output.is-2digit {
+  font-size: 26px;
+  line-height: 40px;
+}
+.output::before {
+  content: var(--icon);
+  line-height: 0;
+}
+.health {
+  --icon: url("./icons/health.svg");
+}
+.hunger {
+  --icon: url("./icons/hunger.svg");
+}
+.sleepiness {
+  --icon: url("./icons/sleepiness.svg");
+}
+.fun {
+  --icon: url("./icons/fun.svg");
+}
+.overall {
+  position: relative;
+  background: #E7F6FD;
+  min-height: 1em;
+  padding: 1px 8px;
+  margin-top: calc(100% + 75px);
+  font-size: 56px;
+  line-height: 1;
+}
+.overall::before {
+  content: "";
+  position: absolute;
+  bottom: calc(100% + 15px);
+  left: 0;
+  width: 100%;
+  padding-top: 100%;
+  border: 7px solid #9FDCF9;
   box-sizing: border-box;
 }
-
-body {
-  background: #1c1c1c;
-  overflow: hidden;
-  height: 100vh;
-}
-
 .bar {
-  color: black;
-  padding: 16px;
+  grid-column: 1/2;
+  grid-row: 1/2;
+  align-self: start;
+  display: grid;
+  grid-template-columns: repeat(4, auto);
+  justify-items: center;
+  padding: 32px 45px 0 45px;
+  z-index: 1;
+}
+.screen {
+  grid-column: 1/2;
+  grid-row: 1/2;
+  background: #CDEDFC;
+  border: 10px solid #DFA46D;
+  box-shadow: inset 0 0 0 10px #E7F6FD;
+  padding: 32px 35px;
 }
 
-.health {
-  padding: 16px;
+.actions {
+  grid-column: 1/2;
+  grid-row: 2/3;
+  display: grid;
+  grid-template-columns: repeat(3, auto);
+  justify-content: space-around;
+  transition: 0.2s ease;
+  transition-property: transform, opacity;
+}
+.actions.is-disabled {
+  transform: translateY(100px);
+  opacity: 0;
+  pointer-events: none;
+}
+.action {
+  position: relative;
+  width: 68px;
+  height: 76px;
+  padding: unset;
+  border: unset;
+  background: unset;
+  outline: unset;
+}
+.action::before {
+  content: var(--icon);
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: grid;
+  place-content: center;
+  width: 68px;
+  height: 68px;
+  border: 5px solid #DFA46D;
+  border-radius: 999px;
+  box-sizing: border-box;
+
+  transition: 0.2s ease;
+  transition-property: transform, box-shadow;
+  box-shadow: 0 8px 0 0 #734F50;
+}
+.action:hover::before,
+.action:focus-visible::before {
+  box-shadow: 0 0 0 0 #734F5090;
+  transform: translateY(8px);
+}
+.feed {
+  --icon: url("./icons/hunger.svg");
+}
+.sleep {
+  --icon: url("./icons/sleepiness.svg");
+}
+.play {
+  --icon: url("./icons/fun.svg");
 }
 
-.gameBoy {
-  max-width: 420px;
-  background: #f8d26d;
-  border-radius: 10px;
-  margin: 0 auto;
-  height: 657px;
+.restart {
+  grid-column: 1/2;
+  grid-row: 2/3;
+  position: relative;
+  padding: 2px 8px;
+  margin-bottom: 10px;
+  border: 6px solid #DFA46D;
+  font-size: 50px;
+  line-height: 1;
+  background: unset;
+  color: #1C1C1C;
+  letter-spacing: -0.02em;
+
+  transition: 0.2s ease;
+  transition-property: transform, box-shadow, opacity;
+  box-shadow: 0 8px 0 0 #734F50;
+  outline: unset;
+}
+.restart:hover,
+.restart:focus-visible {
+  box-shadow: 0 0 0 0 #734F5090;
+  transform: translateY(8px);
+}
+.restart:disabled {
+  transform: translateY(100px);
+  opacity: 0;
+  pointer-events: none;
+}
+.restart::before {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: -6px;
+  width: calc(100% + 12px);
+  height: 8px;
+  transition: inherit;
+  transition-property: transform;
+}
+.restart:hover::before {
+  transform: translateY(-8px);
 }
