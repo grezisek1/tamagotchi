@@ -3,12 +3,50 @@
   <head>
     <meta charset="UTF-8" />
     <title>Tamagotchi</title>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
     <link href="./styles.css" rel="stylesheet" />
   </head>
   <body>
-    <div class="gameBoy">
-      <p class="bar">Energy <span class="health" /></p>
-    </div>
+    <form id="state" class="gameboy">
+      <fieldset class="outputs">
+        <legend class="screen-readers">Game state</legend>
+        <span class="bar">
+          <label>
+            <span class="screen-readers">Health</span>
+            <output name="health" class="output health"></output>
+          </label>
+          <label>
+            <span class="screen-readers">Hunger</span>
+            <output name="hunger" class="output hunger">0</output>
+          </label>
+          <label>
+            <span class="screen-readers">Sleep</span>
+            <output name="sleepiness" class="output sleepiness">0</output>
+          </label>
+          <label>
+            <span class="screen-readers">Fun</span>
+            <output name="fun" class="output fun">0</output>
+          </label>
+        </span>
+        <label class="screen">
+          <span class="screen-readers">Overall</span>
+          <output name="overall" class="output overall"></output>
+        </label>
+      </fieldset>
+      <fieldset class="row actions">
+        <legend class="screen-readers">Take action</legend>
+        <button id="feed" class="action feed">
+          <span class="screen-readers">Feed</span>
+        </button>
+        <button id="sleep" class="action sleep">
+          <span class="screen-readers">Sleep</span>
+        </button>
+        <button id="play" class="action play">
+          <span class="screen-readers">Play</span>
+        </button>
+      </fieldset>
+      <button id="restart" class="restart">Restart</button>
+    </form>
 
     <script src="./app.js" type="module"></script>
   </body>
