@@ -1,0 +1,28 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #1c1c1c;
+  overflow: hidden;
+  height: 100vh;
+}
+
+.bar {
+  color: black;
+  padding: 16px;
+}
+
+.health {
+  padding: 16px;
+}
+
+.gameBoy {
+  max-width: 420px;
+  background: #f8d26d;
+  border-radius: 10px;
+  margin: 0 auto;
+  height: 657px;
+}
