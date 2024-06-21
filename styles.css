@@ -75,7 +75,7 @@ button {
   width: 100%;
   padding-top: 100%;
   border: 7px solid #9FDCF9;
-  background: var(--sprite);
+  background: var(--sprite);/* set from js */
   background-repeat: no-repeat;
   box-sizing: border-box;
 }
