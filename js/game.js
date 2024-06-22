@@ -9,9 +9,11 @@ export default class Game {
     sleepy: ["url('./sprites/sleepy.svg')"],
     dead: ["url('./sprites/dead.svg')"],
     eating: ["url('./sprites/eating_0.svg')", "url('./sprites/eating_1.svg')"],
+    sleeping: ["url('./sprites/sleeping_0.svg')", "url('./sprites/sleeping_1.svg')"],
   };
   static #ACTION_ID_GENERAL_STATE_LUT = {
     feed: "eating",
+    sleep: "sleeping",
   };
   static #GENERAL_STATE_GAMEOVER = "dead";
   constructor(state) {
@@ -46,8 +48,9 @@ export default class Game {
   #even = true;
   #applyParametersStateUpdateLogic() {
     const updateEventDetail = {};
-    if (this.#even) {
-      const newVal = Math.max(0, parseInt(this.state.elements.energy.value) - 1).toString();
+    if (this.#even || this.#action == sleep) {
+      let newVal = parseInt(this.state.elements.energy.value) + (this.#action == sleep ? 2 : -1);
+      newVal = Math.max(0, Math.min(newVal, parseInt(Game.STATE_PARAM_MAX))).toString();
       if (this.state.elements.energy.value != newVal) {
         updateEventDetail.energy = newVal;
         this.state.elements.energy.value = newVal;
@@ -136,6 +139,9 @@ export default class Game {
       case feed:
         this.#toggleFeeding();
         break;
+      case sleep:
+        this.#toggleSleeping();
+        break;
       default:
         console.error("unreachable", e);
         break;
@@ -189,6 +195,13 @@ export default class Game {
       this.#action = null;
     } else {
       this.#action = feed;
+    }
+  }
+  #toggleSleeping() {
+    if (this.#action == sleep) {
+      this.#action = null;
+    } else {
+      this.#action = sleep;
     }
   }
 
