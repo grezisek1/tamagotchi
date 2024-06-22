@@ -10,10 +10,12 @@ export default class Game {
     dead: ["url('./sprites/dead.svg')"],
     eating: ["url('./sprites/eating_0.svg')", "url('./sprites/eating_1.svg')"],
     sleeping: ["url('./sprites/sleeping_0.svg')", "url('./sprites/sleeping_1.svg')"],
+    playing: ["url('./sprites/playing_0.svg')", "url('./sprites/playing_1.svg')"],
   };
   static #ACTION_ID_GENERAL_STATE_LUT = {
     feed: "eating",
     sleep: "sleeping",
+    play: "playing",
   };
   static #GENERAL_STATE_GAMEOVER = "dead";
   constructor(state) {
@@ -48,23 +50,32 @@ export default class Game {
   #even = true;
   #applyParametersStateUpdateLogic() {
     const updateEventDetail = {};
-    if (this.#even || this.#action == sleep) {
-      let newVal = parseInt(this.state.elements.energy.value) + (this.#action == sleep ? 2 : -1);
-      newVal = Math.max(0, Math.min(newVal, parseInt(Game.STATE_PARAM_MAX))).toString();
-      if (this.state.elements.energy.value != newVal) {
-        updateEventDetail.energy = newVal;
-        this.state.elements.energy.value = newVal;
+    let newVal = parseInt(this.state.elements.energy.value);
+    if (this.#action == play) {
+      newVal--;
+      if (this.#even) {
+        newVal--;
       }
+    } else if (this.#action == sleep) {
+      newVal += 2;
+    } else if (this.#even) {
+      newVal--;
+    }
+    newVal = Math.max(0, Math.min(newVal, parseInt(Game.STATE_PARAM_MAX))).toString();
+    if (this.state.elements.energy.value != newVal) {
+      updateEventDetail.energy = newVal;
+      this.state.elements.energy.value = newVal;
     }
     
-    let newVal = parseInt(this.state.elements.hunger.value) + (this.#action == feed ? 2 : -1);
+    newVal = parseInt(this.state.elements.hunger.value) + (this.#action == feed ? 2 : -1);
     newVal = Math.max(0, Math.min(newVal, parseInt(Game.STATE_PARAM_MAX))).toString();
     if (this.state.elements.hunger.value != newVal) {
       updateEventDetail.hunger = newVal;
       this.state.elements.hunger.value = newVal;
     }
 
-    newVal = Math.max(0, parseInt(this.state.elements.fun.value) - 1).toString();
+    newVal = parseInt(this.state.elements.fun.value) + (this.#action == play ? 2 : -1);
+    newVal = Math.max(0, Math.min(newVal, parseInt(Game.STATE_PARAM_MAX))).toString();
     if (this.state.elements.fun.value != newVal) {
       updateEventDetail.fun = newVal;
       this.state.elements.fun.value = newVal;
@@ -95,12 +106,12 @@ export default class Game {
     }
   }
   #applyGeneralStateUpdateLogic() {
-    if (this.#action !== null) {
-      this.#setGeneralState(Game.#ACTION_ID_GENERAL_STATE_LUT[this.#action.id]);
-      return;
-    }
     if (parseInt(state.elements.health.value) == 0) {
       this.#setGeneralState("dead");
+      return;
+    }
+    if (this.#action !== null) {
+      this.#setGeneralState(Game.#ACTION_ID_GENERAL_STATE_LUT[this.#action.id]);
       return;
     }
     if (parseInt(state.elements.energy.value) <= 6) {
@@ -141,6 +152,9 @@ export default class Game {
         break;
       case sleep:
         this.#toggleSleeping();
+        break;
+      case play:
+        this.#togglePlaying();
         break;
       default:
         console.error("unreachable", e);
@@ -202,6 +216,13 @@ export default class Game {
       this.#action = null;
     } else {
       this.#action = sleep;
+    }
+  }
+  #togglePlaying() {
+    if (this.#action == play) {
+      this.#action = null;
+    } else {
+      this.#action = play;
     }
   }
 
