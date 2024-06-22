@@ -1,4 +1,5 @@
 export default class Game {
+  static STATE_PARAM_MIN = "0";
   static STATE_PARAM_MAX = "10";
   static TICK_DELTA_TIME = 1000;
   static #GENERAL_STATE_SPRITE_LUT = {
@@ -16,7 +17,7 @@ export default class Game {
   }
 
   #gameTick = () => {
-
+    this.#applyParametersStateUpdateLogic();
     this.#applyGeneralStateUpdateLogic();
     this.#updateSpriteKeyframe();
   };
@@ -35,6 +36,49 @@ export default class Game {
     this.state.style.setProperty("--sprite", this.#sprite[this.#keyframe]);
   }
 
+  #even = true;
+  #applyParametersStateUpdateLogic() {
+    const updateEventDetail = {};
+    if (this.#even) {
+      if (this.state.elements.energy.value != Game.STATE_PARAM_MIN) {
+        const newVal = parseInt(this.state.elements.energy.value) - 1;
+        updateEventDetail.energy = Math.max(0, newVal).toString();
+        this.state.elements.energy.value = updateEventDetail.energy;
+      }
+    }
+    if (this.state.elements.hunger.value != Game.STATE_PARAM_MIN) {
+      const newVal = parseInt(this.state.elements.hunger.value) - 1;
+      updateEventDetail.hunger = Math.max(0, newVal).toString();
+      this.state.elements.hunger.value = updateEventDetail.hunger;
+    }
+    if (this.state.elements.fun.value != Game.STATE_PARAM_MIN) {
+      const newVal = parseInt(this.state.elements.fun.value) - 1;
+      updateEventDetail.fun = Math.max(0, newVal).toString();
+      this.state.elements.fun.value = updateEventDetail.fun;
+    }
+    if (this.state.elements.hunger.value == Game.STATE_PARAM_MIN || this.state.elements.energy.value == Game.STATE_PARAM_MIN) {
+      if (this.state.elements.health.value != Game.STATE_PARAM_MIN) {
+        const newVal = parseInt(this.state.elements.health.value) - 1;
+        updateEventDetail.health = Math.max(0, newVal).toString();
+        this.state.elements.health.value = updateEventDetail.health;
+      }
+    }
+    if (this.#even) {
+      if (this.state.elements.energy.value != Game.STATE_PARAM_MIN) {
+        if (this.state.elements.fun.value == Game.STATE_PARAM_MIN) {
+          const newVal = parseInt(this.state.elements.energy.value) - 1;
+          updateEventDetail.energy = Math.max(0, newVal).toString();
+          this.state.elements.energy.value = updateEventDetail.energy;
+        }
+      }
+    }
+    this.#even = !this.#even;
+    
+    if (Object.keys(updateEventDetail).length) {
+      const updateEvent = new CustomEvent("update", { detail: updateEventDetail });
+      this.state.dispatchEvent(updateEvent);
+    }
+  }
   #applyGeneralStateUpdateLogic() {
     if (parseInt(state.elements.energy.value) <= 6) {
       this.#setGeneralState("sleepy");
