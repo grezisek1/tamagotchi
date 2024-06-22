@@ -8,6 +8,10 @@ export default class Game {
     hungry: ["url('./sprites/hungry.svg')"],
     sleepy: ["url('./sprites/sleepy.svg')"],
     dead: ["url('./sprites/dead.svg')"],
+    eating: ["url('./sprites/eating_0.svg')", "url('./sprites/eating_1.svg')"],
+  };
+  static #ACTION_ID_GENERAL_STATE_LUT = {
+    feed: "eating",
   };
   static #GENERAL_STATE_GAMEOVER = "dead";
   constructor(state) {
@@ -43,35 +47,40 @@ export default class Game {
   #applyParametersStateUpdateLogic() {
     const updateEventDetail = {};
     if (this.#even) {
-      if (this.state.elements.energy.value != Game.STATE_PARAM_MIN) {
-        const newVal = parseInt(this.state.elements.energy.value) - 1;
-        updateEventDetail.energy = Math.max(0, newVal).toString();
-        this.state.elements.energy.value = updateEventDetail.energy;
+      const newVal = Math.max(0, parseInt(this.state.elements.energy.value) - 1).toString();
+      if (this.state.elements.energy.value != newVal) {
+        updateEventDetail.energy = newVal;
+        this.state.elements.energy.value = newVal;
       }
     }
-    if (this.state.elements.hunger.value != Game.STATE_PARAM_MIN) {
-      const newVal = parseInt(this.state.elements.hunger.value) - 1;
-      updateEventDetail.hunger = Math.max(0, newVal).toString();
-      this.state.elements.hunger.value = updateEventDetail.hunger;
+    
+    let newVal = parseInt(this.state.elements.hunger.value) + (this.#action == feed ? 2 : -1);
+    newVal = Math.max(0, Math.min(newVal, parseInt(Game.STATE_PARAM_MAX))).toString();
+    if (this.state.elements.hunger.value != newVal) {
+      updateEventDetail.hunger = newVal;
+      this.state.elements.hunger.value = newVal;
     }
-    if (this.state.elements.fun.value != Game.STATE_PARAM_MIN) {
-      const newVal = parseInt(this.state.elements.fun.value) - 1;
-      updateEventDetail.fun = Math.max(0, newVal).toString();
-      this.state.elements.fun.value = updateEventDetail.fun;
+
+    newVal = Math.max(0, parseInt(this.state.elements.fun.value) - 1).toString();
+    if (this.state.elements.fun.value != newVal) {
+      updateEventDetail.fun = newVal;
+      this.state.elements.fun.value = newVal;
     }
+
     if (this.state.elements.hunger.value == Game.STATE_PARAM_MIN || this.state.elements.energy.value == Game.STATE_PARAM_MIN) {
-      if (this.state.elements.health.value != Game.STATE_PARAM_MIN) {
-        const newVal = parseInt(this.state.elements.health.value) - 1;
-        updateEventDetail.health = Math.max(0, newVal).toString();
-        this.state.elements.health.value = updateEventDetail.health;
+      newVal = Math.max(0, parseInt(this.state.elements.health.value) - 1).toString();
+      if (this.state.elements.health.value != newVal) {
+        updateEventDetail.health = newVal;
+        this.state.elements.health.value = newVal;
       }
     }
+
     if (this.#even) {
-      if (this.state.elements.energy.value != Game.STATE_PARAM_MIN) {
-        if (this.state.elements.fun.value == Game.STATE_PARAM_MIN) {
-          const newVal = parseInt(this.state.elements.energy.value) - 1;
-          updateEventDetail.energy = Math.max(0, newVal).toString();
-          this.state.elements.energy.value = updateEventDetail.energy;
+      if (this.state.elements.fun.value == Game.STATE_PARAM_MIN) {
+        newVal = Math.max(0, parseInt(this.state.elements.energy.value) - 1).toString();
+        if (this.state.elements.energy.value != newVal) {
+          updateEventDetail.energy = newVal;
+          this.state.elements.energy.value = newVal;
         }
       }
     }
@@ -83,6 +92,10 @@ export default class Game {
     }
   }
   #applyGeneralStateUpdateLogic() {
+    if (this.#action !== null) {
+      this.#setGeneralState(Game.#ACTION_ID_GENERAL_STATE_LUT[this.#action.id]);
+      return;
+    }
     if (parseInt(state.elements.health.value) == 0) {
       this.#setGeneralState("dead");
       return;
@@ -112,11 +125,16 @@ export default class Game {
     this.state.dispatchEvent(updateEvent);
   }
 
+  #action = null;
+
   #onStateSubmit = (e) => {
     e.preventDefault();
     switch (e.submitter) {
       case restart:
         this.#restart();
+        break;
+      case feed:
+        this.#toggleFeeding();
         break;
       default:
         console.error("unreachable", e);
@@ -155,7 +173,8 @@ export default class Game {
     }
 
     this.state.elements.restart.disabled = true;
-    
+    this.#action = null;
+
     clearInterval(this.#gameInterval);
     this.#gameInterval = setInterval(this.#gameTick, Game.TICK_DELTA_TIME);
 
@@ -164,6 +183,15 @@ export default class Game {
       this.state.dispatchEvent(updateEvent);
     }
   }
+
+  #toggleFeeding() {
+    if (this.#action == feed) {
+      this.#action = null;
+    } else {
+      this.#action = feed;
+    }
+  }
+
   #updateIsOutput2Digit() {
     this.state.elements.health.classList
       .toggle("is-2digit", this.state.elements.health.value == Game.STATE_PARAM_MAX);
