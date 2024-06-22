@@ -52,7 +52,7 @@ button {
 .hunger {
   --icon: url("./icons/hunger.svg");
 }
-.sleepiness {
+.energy {
   --icon: url("./icons/sleepiness.svg");
 }
 .fun {
@@ -107,7 +107,7 @@ button {
   transition: 0.2s ease;
   transition-property: transform, opacity;
 }
-.actions.is-disabled {
+.gameboy:has(.restart:not(:disabled)) .actions {
   transform: translateY(100px);
   opacity: 0;
   pointer-events: none;
