@@ -1,8 +1,9 @@
 import Game from "./js/game.js";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const game = new Game();
-
-  // Start game
-  game.start({ healthElement: ".health" });
-});
+if (document.readyState === "complete" || document.readyState === "loaded") {
+  new Game(state);
+} else {
+  document.addEventListener("DOMContentLoaded", () => {
+    new Game(state);
+  });
+}
