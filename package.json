@@ -1,0 +1,14 @@
+{
+  "name": "tamagotchi",
+  "version": "1.0.0",
+  "description": "<h1 align=\"center\">\r   Tamagotchi 👾\r </h1>",
+  "main": "app.js",
+  "scripts": {
+    "build": "tsc app.ts --target esnext"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.5.2"
+  }
+}
