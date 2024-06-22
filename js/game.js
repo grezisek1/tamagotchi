@@ -65,9 +65,11 @@ export default class Game {
     }
     if (this.#even) {
       if (this.state.elements.energy.value != Game.STATE_PARAM_MIN) {
-        const newVal = parseInt(this.state.elements.energy.value) - 1;
-        updateEventDetail.energy = Math.max(0, newVal).toString();
-        this.state.elements.energy.value = updateEventDetail.energy;
+        if (this.state.elements.fun.value == Game.STATE_PARAM_MIN) {
+          const newVal = parseInt(this.state.elements.energy.value) - 1;
+          updateEventDetail.energy = Math.max(0, newVal).toString();
+          this.state.elements.energy.value = updateEventDetail.energy;
+        }
       }
     }
     this.#even = !this.#even;
