@@ -34,6 +34,7 @@ button {
 }
 .output {
   display: flex;
+  justify-content: center;
   align-items: center;
   font-size: 60px;
   line-height: 40px;
@@ -58,16 +59,17 @@ button {
 .fun {
   --icon: url("./icons/fun.svg");
 }
-.overall {
+.general {
   position: relative;
-  background: #E7F6FD;
   min-height: 1em;
   padding: 1px 8px;
   margin-top: calc(100% + 75px);
   font-size: 56px;
   line-height: 1;
+  background: #E7F6FD;
+  color: #724D50;
 }
-.overall::before {
+.general::before {
   content: "";
   position: absolute;
   bottom: calc(100% + 15px);
