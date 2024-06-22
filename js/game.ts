@@ -26,7 +26,7 @@ export default class Game {
   constructor(state: HTMLFormElement) {
     this.state = state;
     this.state.addEventListener("submit", this.#onStateSubmit);
-    this.state.addEventListener("update", this.#onStateUpdate);
+    this.state.addEventListener("update", this.#onStateUpdate as (e: Event) => {});
     this.#gameInterval = setInterval(this.#gameTick, Game.TICK_DELTA_TIME);
     this.#restart();
   }
@@ -144,9 +144,9 @@ export default class Game {
     this.state.dispatchEvent(updateEvent);
   }
 
-  #action = null;
+  #action: HTMLElement | null = null;
 
-  #onStateSubmit = (e) => {
+  #onStateSubmit = (e: SubmitEvent) => {
     e.preventDefault();
     switch (e.submitter) {
       case restart:
@@ -166,7 +166,7 @@ export default class Game {
         break;
     }
   }
-  #onStateUpdate = (e) => {
+  #onStateUpdate = (e: CustomEvent) => {
     if (e.detail.general) {
       this.#setSprite(e.detail.general);
       if (e.detail.general == Game.#GENERAL_STATE_GAMEOVER) {
