@@ -7,15 +7,18 @@ export default class Game {
     sad: ["url('./sprites/bored.svg')"],
     hungry: ["url('./sprites/hungry.svg')"],
     sleepy: ["url('./sprites/sleepy.svg')"],
+    dead: ["url('./sprites/dead.svg')"],
   };
+  static #GENERAL_STATE_GAMEOVER = "dead";
   constructor(state) {
     this.state = state;
     this.state.addEventListener("submit", this.#onStateSubmit);
     this.state.addEventListener("update", this.#onStateUpdate);
+    this.#gameInterval = setInterval(this.#gameTick, Game.TICK_DELTA_TIME);
     this.#restart();
-    setInterval(this.#gameTick, Game.TICK_DELTA_TIME);
   }
 
+  #gameInterval;
   #gameTick = () => {
     this.#applyParametersStateUpdateLogic();
     this.#applyGeneralStateUpdateLogic();
@@ -80,6 +83,10 @@ export default class Game {
     }
   }
   #applyGeneralStateUpdateLogic() {
+    if (parseInt(state.elements.health.value) == 0) {
+      this.#setGeneralState("dead");
+      return;
+    }
     if (parseInt(state.elements.energy.value) <= 6) {
       this.#setGeneralState("sleepy");
       return;
@@ -119,6 +126,9 @@ export default class Game {
   #onStateUpdate = (e) => {
     if (e.detail.general) {
       this.#setSprite(e.detail.general);
+      if (e.detail.general == Game.#GENERAL_STATE_GAMEOVER) {
+        this.state.elements.restart.disabled = false;
+      }
       return;
     }
 
@@ -145,6 +155,9 @@ export default class Game {
     }
 
     this.state.elements.restart.disabled = true;
+    
+    clearInterval(this.#gameInterval);
+    this.#gameInterval = setInterval(this.#gameTick, Game.TICK_DELTA_TIME);
 
     if (Object.keys(updateEventDetail).length) {
       const updateEvent = new CustomEvent("update", { detail: updateEventDetail });
